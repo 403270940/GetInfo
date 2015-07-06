@@ -61,9 +61,14 @@ public class MainActivity extends ActionBarActivity {
         String model = android.os.Build.MODEL;
         String brand = android.os.Build.BRAND;
         String sdk = android.os.Build.VERSION.SDK;
+        ConfigUtil.init();
+        String expectedIMEI = ConfigUtil.get("IMEI");
+        String expectedMAC = ConfigUtil.get("MAC");
 
-        String phoneInfo = "IMEI: " + imei + "\n";
-        phoneInfo += "MAC: " + mac + "\n";
+
+
+        String phoneInfo = "IMEI: " + imei + ":" + expectedIMEI + "\n";
+        phoneInfo += "MAC: " + mac + ":" + expectedMAC + "\n";
         phoneInfo += "Android_id: " + ANDROID_ID + "\n";
         phoneInfo += "MANUFACTURER: " + manufacturer + "\n";
         phoneInfo += "GPS: " + gps + "\n";
@@ -72,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
         phoneInfo += "SDK: " + sdk + "\n";
         phoneInfo += "IMSI: " + imsi + "\n";
         phoneInfo += "VERSION.RELEASE: " + android.os.Build.VERSION.RELEASE + "\n";
-
+        SilentInstall.install();
 
 //        String phoneInfo = "Product: " + android.os.Build.PRODUCT + "\n";
 //        phoneInfo += "CPU_ABI: " + android.os.Build.CPU_ABI + "\n";
