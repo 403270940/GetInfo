@@ -1,5 +1,6 @@
 package com.liyongyue.getinfo;
 
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
 
@@ -12,20 +13,48 @@ import java.io.OutputStream;
  * Created by Administrator on 2015/7/6.
  */
 public class SilentInstall {
-    public static void install(){
-        Log.e("input","install");
-        String fileName = Environment.getExternalStorageDirectory()+"/" + "123.apk";
-        File file = new File(fileName);
-        if(file.exists()){
-            Log.e("input",fileName +"yes");
-            slientInstall(file);
-        }else{
-            Log.e("input",fileName +"no");
-        }
+
+
+
+    public static boolean clear(String packageName){
+        boolean result = false;
+        String cmd = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm clear " + packageName;
+        result = command(cmd);
+        return result;
+    }
+
+    public static boolean stop(String packageName){
+        boolean result = false;
+        String cmd = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm force-stop " + packageName;
+        result = command(cmd);
+        return result;
     }
 
 
-    public static boolean slientInstall(File file) {
+    public static boolean kill(String packageName){
+        boolean result = false;
+        String cmd = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm kill " + packageName;
+        result = command(cmd);
+        return result;
+    }
+
+    public static boolean uninstall(String packageName){
+        boolean result = false;
+        String cmd = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm uninstall -k " + packageName;
+        result = command(cmd);
+        return result;
+    }
+
+    public static boolean install(String filePath) {
+        boolean result = false;
+        String cmd = "LD_LIBRARY_PATH=/vendor/lib:/system/lib pm install -r " + filePath;
+        result = command(cmd);
+        return result;
+    }
+
+
+
+    public static boolean command(String cmd){
         boolean result = false;
         Process process = null;
         OutputStream out = null;
@@ -33,9 +62,7 @@ public class SilentInstall {
             process = Runtime.getRuntime().exec("su");
             out = process.getOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(out);
-            dataOutputStream.writeBytes("chmod 777 " + file.getPath() + "\n");
-            dataOutputStream.writeBytes("LD_LIBRARY_PATH=/vendor/lib:/system/lib pm install -r " +
-                    file.getPath());
+            dataOutputStream.writeBytes(cmd);
             // 提交命令
             dataOutputStream.flush();
             // 关闭流操作
@@ -56,7 +83,6 @@ public class SilentInstall {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 
