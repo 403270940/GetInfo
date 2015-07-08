@@ -18,4 +18,31 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="44dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Install"
+        android:id="@+id/InstallButton"
+        android:layout_alignTop="@+id/showButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Uninstall"
+        android:id="@+id/UninstallButton"
+        android:layout_alignTop="@+id/showButton"
+        android:layout_toRightOf="@+id/showButton"
+        android:layout_toEndOf="@+id/showButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clear"
+        android:id="@+id/ClearButton"
+        android:layout_above="@+id/showButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp" />
+
 </RelativeLayout>

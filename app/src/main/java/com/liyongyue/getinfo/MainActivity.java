@@ -1,14 +1,20 @@
 package com.liyongyue.getinfo;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,29 +23,68 @@ import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.io.File;
+
 
 public class MainActivity extends ActionBarActivity {
-
+    String filePath = Environment.getExternalStorageDirectory() + "/123.apk";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button showButton = (Button)findViewById(R.id.showButton);
-        final TextView showTextVeiw = (TextView)findViewById(R.id.showTextView);
+        Button installButton = (Button)findViewById(R.id.InstallButton);
+        Button uninstallButton = (Button)findViewById(R.id.UninstallButton);
+        final TextView showTextView = (TextView)findViewById(R.id.showTextView);
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String phoneInfo = getInfo();
-                showTextVeiw.setText(phoneInfo);
+                showTextView.setText(phoneInfo);
+            }
+        });
+
+        installButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SilentInstall.install(filePath);
+            }
+        });
+        uninstallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SilentInstall.uninstall(getAPKName(filePath));
+            }
+        });
+
+        Button clearButton = (Button)findViewById(R.id.ClearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SilentInstall.clear(getAPKName(filePath));
             }
         });
         MobclickAgent.updateOnlineConfig( this );
 
     }
+
+    private String getAPKName(String filePath){
+        PackageManager pm = this.getPackageManager();
+        String name = "";
+        try {
+            PackageInfo pi = pm.getPackageArchiveInfo(filePath, PackageManager.GET_ACTIVITIES);
+            ApplicationInfo applicationInfo = pi.applicationInfo;
+            name = applicationInfo.packageName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.e("input",name);
+        return name;
+    }
+
     private String getInfo(){
 
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-
         String imsi = tm.getSubscriberId();
         WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifi.getConnectionInfo();
@@ -61,9 +106,14 @@ public class MainActivity extends ActionBarActivity {
         String model = android.os.Build.MODEL;
         String brand = android.os.Build.BRAND;
         String sdk = android.os.Build.VERSION.SDK;
+        ConfigUtil.init();
+        String expectedIMEI = ConfigUtil.get("IMEI");
+        String expectedMAC = ConfigUtil.get("MAC");
 
-        String phoneInfo = "IMEI: " + imei + "\n";
-        phoneInfo += "MAC: " + mac + "\n";
+
+
+        String phoneInfo = "IMEI: " + imei + ":" + expectedIMEI + "\n";
+        phoneInfo += "MAC: " + mac + ":" + expectedMAC + "\n";
         phoneInfo += "Android_id: " + ANDROID_ID + "\n";
         phoneInfo += "MANUFACTURER: " + manufacturer + "\n";
         phoneInfo += "GPS: " + gps + "\n";
