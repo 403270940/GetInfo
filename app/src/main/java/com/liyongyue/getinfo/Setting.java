@@ -1,9 +1,16 @@
 package com.liyongyue.getinfo;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.List;
 
 
 public class Setting extends ActionBarActivity {
@@ -20,6 +27,9 @@ public class Setting extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_setting, menu);
         return true;
     }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

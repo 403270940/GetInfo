@@ -45,4 +45,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="48dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GetIP"
+        android:id="@+id/getIPButton"
+        android:layout_alignTop="@+id/ClearButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

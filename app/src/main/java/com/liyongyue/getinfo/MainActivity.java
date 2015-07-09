@@ -1,15 +1,19 @@
 package com.liyongyue.getinfo;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,6 +28,9 @@ import android.widget.TextView;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -36,6 +43,28 @@ public class MainActivity extends ActionBarActivity {
         Button installButton = (Button)findViewById(R.id.InstallButton);
         Button uninstallButton = (Button)findViewById(R.id.UninstallButton);
         final TextView showTextView = (TextView)findViewById(R.id.showTextView);
+
+        final android.os.Handler handler = new android.os.Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                String result = (String)msg.obj;
+                Log.e("input",result);
+            }
+        };
+        final Thread getThread = new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                Log.e("input","start");
+                String ip = HttpUtil.getIP();
+                Message msg = new Message();
+                msg.obj = ip;
+                handler.handleMessage(msg);
+                Log.e("input","end");
+            }
+        };
+
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,6 +77,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 SilentInstall.install(filePath);
+                openApp(getAPKName(filePath));
             }
         });
         uninstallButton.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +87,15 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        Button getIPButton = (Button)findViewById(R.id.getIPButton);
+        getIPButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(getThread).start();
+            }
+        });
+
+
         Button clearButton = (Button)findViewById(R.id.ClearButton);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,9 +103,14 @@ public class MainActivity extends ActionBarActivity {
                 SilentInstall.clear(getAPKName(filePath));
             }
         });
+
+
+
+
         MobclickAgent.updateOnlineConfig( this );
 
     }
+
 
     private String getAPKName(String filePath){
         PackageManager pm = this.getPackageManager();
@@ -78,7 +122,7 @@ public class MainActivity extends ActionBarActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.e("input",name);
+        Log.e("input", name);
         return name;
     }
 
@@ -147,6 +191,38 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+
+    private void openApp(String packageName) {
+        PackageManager pm = this.getPackageManager();
+        PackageInfo pi = null;
+        try {
+            pi = pm.getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
+        resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        resolveIntent.setPackage(pi.packageName);
+
+        List<ResolveInfo> apps = pm.queryIntentActivities(resolveIntent, 0);
+
+        ResolveInfo ri = apps.iterator().next();
+        if (ri != null ) {
+            String packName = ri.activityInfo.packageName;
+            String className = ri.activityInfo.name;
+
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            ComponentName cn = new ComponentName(packName, className);
+
+            intent.setComponent(cn);
+            startActivity(intent);
+        }
     }
 
     @Override
