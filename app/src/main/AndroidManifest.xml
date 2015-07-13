@@ -33,6 +33,10 @@
             android:name=".Setting"
             android:label="@string/title_activity_setting" >
         </activity>
+        <activity
+            android:name=".ParamList"
+            android:label="@string/title_activity_param_list" >
+        </activity>
     </application>
 
 </manifest>
