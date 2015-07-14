@@ -1,6 +1,5 @@
 package com.liyongyue.getinfo;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,21 +26,19 @@ import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.io.File;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 
 public class MainActivity extends ActionBarActivity {
     String filePath = Environment.getExternalStorageDirectory() + "/123.apk";
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button showButton = (Button)findViewById(R.id.showButton);
         Button installButton = (Button)findViewById(R.id.InstallButton);
         Button uninstallButton = (Button)findViewById(R.id.UninstallButton);
+        Button setParamButton = (Button)findViewById(R.id.SetParamButton);
         final TextView showTextView = (TextView)findViewById(R.id.showTextView);
 
         final android.os.Handler handler = new android.os.Handler(){
@@ -104,13 +101,33 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        setParamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,Param.class);
+                startActivity(intent);
+                //如果不关闭当前的会出现好多个页面
+                MainActivity.this.finish();
 
+            }
+        });
 
 
         MobclickAgent.updateOnlineConfig( this );
 
     }
 
+    public Location getLocation(Context context) {
+        LocationManager locMan = (LocationManager) context
+                .getSystemService(Context.LOCATION_SERVICE);
+        Location location = locMan
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location == null) {
+            location = locMan
+                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+        return location;
+    }
 
     private String getAPKName(String filePath){
         PackageManager pm = this.getPackageManager();
@@ -134,23 +151,24 @@ public class MainActivity extends ActionBarActivity {
         WifiInfo info = wifi.getConnectionInfo();
 
         LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        String strLati = "";
-        String strLong = "";
+        Location location = getLocation(this);
+        double strLati = 0;
+        double strLong = 0;
         if(location != null){
-            strLati = Double.toString(location.getLatitude());
-            strLong = Double.toString(location.getLongitude());
+            strLati = location.getLatitude();
+            strLong = location.getLongitude();
         }
 
         String imei = tm.getDeviceId();
         String mac = info.getMacAddress();
-        String ANDROID_ID = Settings.System.getString(getContentResolver(), Settings.System.ANDROID_ID);
+        String ANDROID_ID = Settings.Secure.getString(getContentResolver(), Settings.System.ANDROID_ID);
         String manufacturer = android.os.Build.MANUFACTURER;
         String gps = strLati + "/" + strLong;
         String model = android.os.Build.MODEL;
         String brand = android.os.Build.BRAND;
         String sdk = android.os.Build.VERSION.SDK;
-        ConfigUtil.init();
+
+
         String expectedIMEI = ConfigUtil.get("IMEI");
         String expectedMAC = ConfigUtil.get("MAC");
 

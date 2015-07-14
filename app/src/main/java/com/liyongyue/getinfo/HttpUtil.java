@@ -17,6 +17,12 @@ import java.io.IOException;
  */
 public class HttpUtil {
     private static HttpClient httpClient = new DefaultHttpClient();
+
+    public static String getTime(){
+        return "";
+    }
+
+
     public static String getIP(){
         HttpGet get = new HttpGet("http://www.liyongyue.com/getip.php");
         httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,10000);
