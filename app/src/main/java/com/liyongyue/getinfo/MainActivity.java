@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.location.LocationManager;
+
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
@@ -28,6 +30,8 @@ import android.widget.TextView;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -91,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
         getIPButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(getThread).start();
+
             }
         });
 
@@ -249,6 +253,8 @@ public class MainActivity extends ActionBarActivity {
         super.onPause();
         MobclickAgent.onPause(this);
     }
+
+
 
 
 }

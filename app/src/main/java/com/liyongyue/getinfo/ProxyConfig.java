@@ -6,6 +6,9 @@ package com.liyongyue.getinfo;
 public class ProxyConfig {
 
     public static String getIP(){
+
+        
+
         return null;
     }
 }

@@ -1,5 +1,6 @@
 package com.liyongyue.getinfo;
 
+import android.net.Proxy;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -33,5 +34,7 @@ public class HttpUtil {
         }
         return null;
     }
+
+
 
 }
