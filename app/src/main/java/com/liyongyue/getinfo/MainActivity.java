@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
         Button installButton = (Button)findViewById(R.id.InstallButton);
         Button uninstallButton = (Button)findViewById(R.id.UninstallButton);
         Button setParamButton = (Button)findViewById(R.id.SetParamButton);
+        Button proxyButton = (Button)findViewById(R.id.ProxyButton);
         final TextView showTextView = (TextView)findViewById(R.id.showTextView);
 
         final android.os.Handler handler = new android.os.Handler(){
@@ -111,7 +112,16 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+        proxyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,Setting.class);
+                startActivity(intent);
+                //如果不关闭当前的会出现好多个页面
+                MainActivity.this.finish();
 
+            }
+        });
 
         MobclickAgent.updateOnlineConfig( this );
 

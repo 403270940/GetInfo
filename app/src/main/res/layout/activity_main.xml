@@ -63,4 +63,13 @@
         android:layout_alignLeft="@+id/UninstallButton"
         android:layout_alignStart="@+id/UninstallButton" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="setProxy"
+        android:id="@+id/ProxyButton"
+        android:layout_above="@+id/ClearButton"
+        android:layout_toRightOf="@+id/InstallButton"
+        android:layout_toEndOf="@+id/InstallButton" />
+
 </RelativeLayout>
